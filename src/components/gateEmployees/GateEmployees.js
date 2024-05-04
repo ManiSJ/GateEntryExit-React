@@ -1,35 +1,72 @@
-import React, { useEffect, useRef, useState } from "react";
-import { getAllGateEmployee } from '../../service/GateEmployeeService';
+import React, { useEffect, useState } from "react";
+import { createGateEmployee, getAllGateEmployee, deleteGateEmployee } from '../../service/GateEmployeeService';
+import "./GateEmployees.css"
+import GateEmployeeCreateEditModal from "./GateEmployeeCreateEditModal";
+import { useNavigate } from 'react-router-dom';
 
 const GateEmployees = () => {
 
     const [data, setData] = useState({
-        content: [],
+        content: [], 
         totalPages : useState(0)
     });
     const [currentPage , setCurrentPage] = useState(0);
     const [showModal, setShowModal] = useState(false);
+    const [gateEmployeeFormValue, setGateEmployeeFormValue] = useState({
+        name : ''
+    });
 
-    const getGateEmployees = async (page = 0, size = 10) => {
+    const navigate = useNavigate();
+
+    const getGateEmployees = async (page = 0, size = 5) => {
         try{
             setCurrentPage(page);
-            //const response = await getAllGateEmployee(page,size);
-            //setData({content : response.data.content, totalPages : response.data.totalPages});
+            const response = await getAllGateEmployee(page,size);
+            setData({content : response.data.content, totalPages : response.data.totalPages});
         }
         catch(error){
             console.log(error);
         }
     }
 
+    const closeCreateModal = () => {
+        setShowModal(false);
+        resetForm();
+    }
+
+    const resetForm = () => {
+        setGateEmployeeFormValue({ name : ''});
+    }
+
+    const nameOnchange = (event) => {
+        setGateEmployeeFormValue({...gateEmployeeFormValue, [event.target.name] : event.target.value })
+    }
+
+    const createGateEmploye = async (event) => {
+        event.preventDefault();
+        await createGateEmployee(gateEmployeeFormValue.name);
+        setShowModal(false);
+        resetForm();
+        getGateEmployees();
+    }
+
+    const editGateEmploye = (id) =>{
+        navigate(`/gateEmployees/${id}`);
+    }
+
+    const deleteGateEmploye = async (id) =>{
+        await deleteGateEmployee(id);
+        getGateEmployees();
+    }
+
     useEffect(() => { getGateEmployees(); }, []);
 
     return (
-        <>
         <div className="container">
             <div className="row">                               
                 <div className="col-md-6">
                     <div> 
-                        <h2>Gate employees</h2>
+                        <h2>Gate employees</h2>                        
                         <button className="float-end btn btn-primary" onClick={() => setShowModal(true)}>Create</button>
                     </div>
                    
@@ -43,8 +80,8 @@ const GateEmployees = () => {
                         <tbody>
                             {data.content && data.content.map(employee => <tr key={employee.id}>
                                 <td>
-                                    <button className="btn btn-primary">Edit</button>
-                                    <button className="mx-2 btn btn-danger">Delete</button>                                   
+                                    <button className="btn btn-primary" onClick={() => editGateEmploye(employee.id)}>Edit</button>
+                                    <button className="mx-2 btn btn-danger" onClick={() => deleteGateEmploye(employee.id)}>Delete</button>                                   
                                 </td>
                                 <td>{employee.name}</td>
                                 </tr>)
@@ -70,24 +107,12 @@ const GateEmployees = () => {
             </div>
 
             {showModal && (
-                <div className="modal" id="gateEmployee-modal">
-                    <div className="modal-dialog">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Gate Employees</h5>
-                                <button type="button" className="btn-close" onClick={() => setShowModal(false)} data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                Hello Modal
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} data-bs-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>)} 
+            <GateEmployeeCreateEditModal 
+                closeCreateModal={closeCreateModal} 
+                gateEmployeeFormValue={gateEmployeeFormValue}
+                nameOnchange={nameOnchange}
+                createGateEmployee={createGateEmploye} />)} 
         </div>
-  </>
     );
 }
 
