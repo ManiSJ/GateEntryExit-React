@@ -20,7 +20,7 @@ const GateEmployeeCreateEditModal = ({closeCreateModal, createGateEmployee, gate
                     </div>                                
                 </div>
                 <div className="modal-footer">
-                    <button type="submit" className="btn btn-primary" onClick={createGateEmployee}>Submit</button>
+                    <button type="submit" className="btn btn-primary" onClick={(e) => createGateEmployee(e, gateEmployeeFormValue.name)}>Submit</button>
                     <button type="button" className="btn btn-primary" onClick={closeCreateModal}>Close</button>
                 </div>
             </div>

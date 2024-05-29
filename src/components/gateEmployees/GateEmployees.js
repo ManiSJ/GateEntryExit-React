@@ -3,8 +3,10 @@ import { createGateEmployee, getAllGateEmployee, deleteGateEmployee } from '../.
 import "./GateEmployees.css"
 import GateEmployeeCreateEditModal from "./GateEmployeeCreateEditModal";
 import { useNavigate } from 'react-router-dom';
+import { createGateEmployeeAsync } from "../../redux/gateEmployee/gateEmployeeActions";
+import { connect, useDispatch, useSelector } from "react-redux";
 
-const GateEmployees = () => {
+const GateEmployees = (props) => {
 
     const [data, setData] = useState({
         content: [], 
@@ -15,7 +17,8 @@ const GateEmployees = () => {
     const [gateEmployeeFormValue, setGateEmployeeFormValue] = useState({
         name : ''
     });
-
+    const lastCreatedGateEmployeeName = useSelector(state => state.gateEmployee.lastCreatedGateEmployeeName);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const getGateEmployees = async (page = 0, size = 5) => {
@@ -42,13 +45,20 @@ const GateEmployees = () => {
         setGateEmployeeFormValue({...gateEmployeeFormValue, [event.target.name] : event.target.value })
     }
 
-    const createGateEmploye = async (event) => {
+    /* const createGateEmployee = async (event) => {
         event.preventDefault();
         await createGateEmployee(gateEmployeeFormValue.name);
         setShowModal(false);
         resetForm();
         getGateEmployees();
-    }
+    } */
+
+    const createGateEmployee = (event, name) => {
+        event.preventDefault();
+        props.createGateEmployee(name);
+        closeCreateModal();
+        getGateEmployees();
+    } 
 
     const editGateEmploye = (id) =>{
         navigate(`/gateEmployees/${id}`);
@@ -65,6 +75,11 @@ const GateEmployees = () => {
         <div className="container">
             <div className="row">                               
                 <div className="col-md-6">
+
+                    <h2>Last create gate employee name : {lastCreatedGateEmployeeName}</h2>
+                    <h2>Last create gate employee name via stateToProps : {props.gateEmployeeName}</h2>
+                    <button className="btn btn-primary" onClick={() => dispatch(createGateEmployeeAsync("RubyA"))}>Create employee by direct dispatch</button>
+
                     <div> 
                         <h2>Gate employees</h2>                        
                         <button className="float-end btn btn-primary" onClick={() => setShowModal(true)}>Create</button>
@@ -111,9 +126,24 @@ const GateEmployees = () => {
                 closeCreateModal={closeCreateModal} 
                 gateEmployeeFormValue={gateEmployeeFormValue}
                 nameOnchange={nameOnchange}
-                createGateEmployee={createGateEmploye} />)} 
+                createGateEmployee={createGateEmployee} />)} 
         </div>
     );
 }
 
-export default GateEmployees
+const mapStateToProps = state => {
+    return {
+        gateEmployeeName : state.gateEmployee.lastCreatedGateEmployeeName
+    }
+}
+
+const mapDispathToProps = (dispatch) => {
+    return {
+        createGateEmployee : (name) => 
+        {          
+            dispatch(createGateEmployeeAsync(name));
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispathToProps)(GateEmployees)
