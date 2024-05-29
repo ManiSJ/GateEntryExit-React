@@ -5,6 +5,7 @@ import GateEmployeeCreateEditModal from "./GateEmployeeCreateEditModal";
 import { useNavigate } from 'react-router-dom';
 import { createGateEmployeeAsync } from "../../redux/gateEmployee/gateEmployeeActions";
 import { connect, useDispatch, useSelector } from "react-redux";
+import { createGateEmployeeAsyncThunkCompleted, createGateEmployeeAsyncThunk } from "../../redux/gateEmployee/gateEmployeeSlicer";
 
 const GateEmployees = (props) => {
 
@@ -55,7 +56,9 @@ const GateEmployees = (props) => {
 
     const createGateEmployee = (event, name) => {
         event.preventDefault();
-        props.createGateEmployee(name);
+        //props.createGateEmployee(name);
+        dispatch(createGateEmployeeAsyncThunk(name));
+        dispatch(createGateEmployeeAsyncThunkCompleted("finally"));
         closeCreateModal();
         getGateEmployees();
     } 

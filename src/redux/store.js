@@ -2,7 +2,15 @@ import {  legacy_createStore as createStore, applyMiddleware } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import logger from 'redux-logger'
 import { thunk } from 'redux-thunk'
-import { rootReducer } from './rootReducer'
+//import { rootReducer } from './rootReducer'
+import { configureStore } from '@reduxjs/toolkit'
+import gateEmployeeReducer from './gateEmployee/gateEmployeeSlicer'
 
 const middlewares = [logger, thunk];
-export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(...middlewares)));
+// export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(...middlewares)));
+
+export const store = configureStore({
+    reducer : {
+        gateEmployee : gateEmployeeReducer
+    },
+});
