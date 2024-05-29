@@ -22,11 +22,11 @@ export const createGateEmployeeError = (error) => {
 }
 
 export const createGateEmployeeAsync = (employeeName) => {
-    return (dispatch) => {
+    return async (dispatch) => {
         console.log('createGateEmployeeAsync');
         dispatch(createGateEmployeeRequest);
         const api_url = "http://localhost:8081";
-        createGateEmployee(employeeName).then(response => {
+        await createGateEmployee(employeeName).then(response => {
             console.log('response', response);
             dispatch(createGateEmployeeSuccess(response.data.name));
         }).catch(error => {
