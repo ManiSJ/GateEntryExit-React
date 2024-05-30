@@ -79,8 +79,8 @@ const GateEmployees = (props) => {
             <div className="row">                               
                 <div className="col-md-6">
 
-                    <h2>Last create gate employee name : {lastCreatedGateEmployeeName}</h2>
-                    <h2>Last create gate employee name via stateToProps : {props.gateEmployeeName}</h2>
+                    <p>Last create gate employee name : {lastCreatedGateEmployeeName}</p>
+                    <p>Last create gate employee name via stateToProps : {props.gateEmployeeName}</p>
                     <button className="btn btn-primary" onClick={() => dispatch(createGateEmployeeAsync("RubyA"))}>Create employee by direct dispatch</button>
 
                     <div> 
